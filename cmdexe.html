@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect to AOS Terminal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: url('https://wallpapercave.com/wp/wp2757874.gif') no-repeat center center fixed; /* Yeni arka plan GIF dosyası */
+            background-size: cover; /* Resmin tüm ekranı kaplamasını sağlar */
+        }
+        .container {
+            background: none;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            width: 1000px;
+            text-align: center;
+            border-radius: 10px;
+            z-index: 1;
+        }
+        .connect-box, .wallet-info, .terminal-container {
+            margin-bottom: 20px;
+        }
+        .btn {
+            background-color: none;
+            color: rgb(0, 0, 0);
+            box-shadow: 0 0 10px rgb(255, 255, 255);
+            border: none;
+            padding: 20px 40px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold; /* Metnin koyu olması */
+            font-size: larger;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Buttonun gölgeli olması */
+        }
+        
+        .btn:hover {
+            background-color: #7866d3;
+        }
+        .disconnect-btn {
+            background-color: #e43344;
+        }
+        .disconnect-btn:hover {
+            background-color: #bb2937;
+        }
+        .terminal-container iframe {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #7866d3;
+            border-radius: 5px;
+        }
+        .social-logos {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .social-logos img {
+            width: 50px;
+        }
+        .social-logos a {
+            display: inline-block;
+        }
+        .logo-bottom-right {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 2;
+        }
+        .logo-bottom-right img {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+			<a href="https://discord.gg/cSK7vu4QRS" target="_blank">
+            	<img src="https://cookbook_ao.g8way.io/ao-logo-grey.svg" alt="AO">
+			</a>
+        </div>
+        <div class="connect-box">
+			<h1>For Access to Terminal <br><h1>Please Click to Connect Button</h1></h1>
+            <button type="button" id="connect" class="btn arconnect-btn">Connect</button>
+        </div>
+        <div id="wallet-info" class="wallet-info" style="display:none;">
+            <h2>Wallet Information</h2>
+            <p id="wallet-address"></p>
+            <button type="button" id="disconnect" class="btn disconnect-btn">Disconnect</button>
+        </div>
+        <div id="terminal-container" class="terminal-container" style="display:none;">
+            <iframe id="terminal" src="" frameborder="0"></iframe>
+        </div>
+        <div class="social-logos">
+            <a href="https://discord.gg/cSK7vu4QRS" target="_blank">
+                <img src="https://assets-global.website-files.com/625fe439fb70a9d901e138ab/648c1a09c6a80c200fa95349_628c05f2e63f068e62b96336_Discord%20Author%20Black-p-500.png" alt="Discord">
+            </a>
+            <a href="https://x.com/aoTheComputer" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/57/X_logo_2023_%28white%29.png" alt="X">
+            </a>
+        </div>
+        <div class="logo-bottom-right">
+            <a href="https://github.com/Xelp66" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Github_logo_svg.svg" alt="Logo">
+            </a>
+        </div>
+    </div>
+    <script>
+        // ArConnect integration JavaScript
+        document.getElementById('connect').addEventListener('click', async () => {
+            if (window.arweaveWallet) {
+                try {
+                    // Request connection to ArConnect
+                    await window.arweaveWallet.connect(["ACCESS_ADDRESS", "SIGN_TRANSACTION"]);
+                    console.log("ArConnect connected");
+
+                    // Get the wallet address
+                    const address = await window.arweaveWallet.getActiveAddress();
+                    document.getElementById('wallet-address').textContent = `Connected Wallet Address: ${address}`;
+
+                    // Show the wallet info and terminal iframe
+                    document.getElementById('wallet-info').style.display = 'block';
+                    document.getElementById('terminal-container').style.display = 'block';
+                    document.getElementById('terminal').src = "https://sh_ao.g8way.io/";
+                } catch (error) {
+                    console.error("Failed to connect to ArConnect", error);
+                    alert("Failed to connect to ArConnect. Please try again.");
+                }
+            } else {
+                alert("ArConnect wallet not installed. Please install it first.");
+            }
+        });
+
+        // Disconnect ArConnect
+        document.getElementById('disconnect').addEventListener('click', async () => {
+            if (window.arweaveWallet) {
+                try {
+                    await window.arweaveWallet.disconnect();
+                    console.log("ArConnect disconnected");
+
+                    // Hide the wallet info and terminal iframe
+                    document.getElementById('wallet-info').style.display = 'none';
+                    document.getElementById('terminal-container').style.display = 'none';
+                    document.getElementById('wallet-address').textContent = '';
+                } catch (error) {
+                    console.error("Failed to disconnect ArConnect", error);
+                    alert("Failed to disconnect ArConnect. Please try again.");
+                }
+            }
+        });
+
+        // Check if ArConnect is installed
+        if (!window.arweaveWallet) {
+            console.warn("ArConnect is not installed.");
+        }
+    </script>
+</body>
+</html>
